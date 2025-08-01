@@ -5,7 +5,7 @@ from tkinter import messagebox
 client = ollama.Client()
 
 model = "llama3.2"
-DIRECTORY = 'C:/Users/tstee/PycharmProjects/AI_Code_Testing/SWU_LifeCounter.py'
+DIRECTORY = 'PycharmProjects/AI_Code_Testing/SWU_LifeCounter.py'
 template = "Templates/readme_template.txt"
 script = ''
 
