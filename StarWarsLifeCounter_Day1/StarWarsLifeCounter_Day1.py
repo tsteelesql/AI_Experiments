@@ -10,12 +10,16 @@ class StarWarsLifeCounter:
         self.first_player = "Player 1"
 
         self.create_ui()
+        # Make columns and rows expandable
+        self.root.grid_columnconfigure(0, weight=1)
+        self.root.grid_columnconfigure(1, weight=1)
+        self.root.grid_rowconfigure(0, weight=1)
 
     def create_ui(self):
         # Player Frames
         for i, player in enumerate(self.life_totals):
             frame = tk.Frame(self.root, padx=10, pady=10, bd=2, relief="groove")
-            frame.grid(row=0, column=i, padx=10, pady=10)
+            frame.grid(row=0, column=i, padx=10, pady=10, sticky="nsew")
 
             label = tk.Label(frame, text=player, font=("Arial", 14, "bold"))
             label.pack()
