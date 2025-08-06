@@ -13,13 +13,16 @@ class LifeCounterApp:
         # Player states
         self.life = [30, 30]
         self.has_force = [False, False]
-        self.first_player = 0
+        self.first_player = 0  # 0 = Player 1, 1 = Player 2
 
-        # Configure grid weights for scaling
-        for i in range(6):  # 6 rows
+        # Configure grid weights
+        for i in range(6):
             self.root.rowconfigure(i, weight=1)
-        for j in range(4):  # 4 columns
+        for j in range(4):
             self.root.columnconfigure(j, weight=1)
+
+        # Set initial background
+        self.update_background()
 
         # UI Elements
         self.create_widgets()
@@ -29,35 +32,29 @@ class LifeCounterApp:
         self.default_font.configure(size=new_size)
 
     def create_widgets(self):
-        # Player labels
-        self.p1_label = tk.Label(self.root, text="Player 1", font=self.default_font)
-        self.p2_label = tk.Label(self.root, text="Player 2", font=self.default_font)
+        self.p1_label = tk.Label(self.root, text="Player 1", font=self.default_font, bg=self.root["bg"])
+        self.p2_label = tk.Label(self.root, text="Player 2", font=self.default_font, bg=self.root["bg"])
         self.p1_label.grid(row=0, column=0, columnspan=2, sticky="nsew")
         self.p2_label.grid(row=0, column=2, columnspan=2, sticky="nsew")
 
-        # Life totals
-        self.p1_life = tk.Label(self.root, text=str(self.life[0]), font=self.default_font)
-        self.p2_life = tk.Label(self.root, text=str(self.life[1]), font=self.default_font)
+        self.p1_life = tk.Label(self.root, text=str(self.life[0]), font=self.default_font, bg=self.root["bg"])
+        self.p2_life = tk.Label(self.root, text=str(self.life[1]), font=self.default_font, bg=self.root["bg"])
         self.p1_life.grid(row=1, column=0, columnspan=2, sticky="nsew")
         self.p2_life.grid(row=1, column=2, columnspan=2, sticky="nsew")
 
-        # Life control buttons
         tk.Button(self.root, text="+", font=self.default_font, command=lambda: self.change_life(0, 1)).grid(row=2, column=0, sticky="nsew")
         tk.Button(self.root, text="-", font=self.default_font, command=lambda: self.change_life(0, -1)).grid(row=2, column=1, sticky="nsew")
         tk.Button(self.root, text="+", font=self.default_font, command=lambda: self.change_life(1, 1)).grid(row=2, column=2, sticky="nsew")
         tk.Button(self.root, text="-", font=self.default_font, command=lambda: self.change_life(1, -1)).grid(row=2, column=3, sticky="nsew")
 
-        # Force toggles
         self.p1_force_btn = tk.Button(self.root, text="Force: OFF", font=self.default_font, command=lambda: self.toggle_force(0))
         self.p2_force_btn = tk.Button(self.root, text="Force: OFF", font=self.default_font, command=lambda: self.toggle_force(1))
         self.p1_force_btn.grid(row=3, column=0, columnspan=2, sticky="nsew")
         self.p2_force_btn.grid(row=3, column=2, columnspan=2, sticky="nsew")
 
-        # First player indicator
-        self.first_player_label = tk.Label(self.root, text="First Player: 1", font=self.default_font)
+        self.first_player_label = tk.Label(self.root, text="First Player: 1", font=self.default_font, bg=self.root["bg"])
         self.first_player_label.grid(row=4, column=0, columnspan=4, sticky="nsew")
 
-        # Toggle first player button
         tk.Button(self.root, text="Toggle First Player", font=self.default_font, command=self.toggle_first_player).grid(row=5, column=0, columnspan=4, sticky="nsew")
 
     def change_life(self, player, delta):
@@ -75,6 +72,11 @@ class LifeCounterApp:
     def toggle_first_player(self):
         self.first_player = 1 - self.first_player
         self.first_player_label.config(text=f"First Player: {self.first_player + 1}")
+        self.update_background()
+
+    def update_background(self):
+        color = "lightblue" if self.first_player == 0 else "lightcoral"
+        self.root.configure(bg=color)
 
 if __name__ == "__main__":
     root = tk.Tk()
