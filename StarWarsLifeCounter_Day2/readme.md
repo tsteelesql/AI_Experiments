@@ -1,6 +1,11 @@
 # Star Wars Life Counter
 A simple GUI application to track players' lives in a game of Star Wars.
 
+#### Initial Prompt
+Act as an expert python programmer.  
+Write code using python for a Star Wars life counter application. It should set starting life to 30 and support two players.  Have buttons to raise and lower life totals, an indicator of the current first player, which can be updated, and a toggle for having the "Force", which either or both players may have at the same time.
+Pack all buttons using a grid, and use Tkfont or similar to allow the labels in buttons to scale as the window is expanded.
+
 ## Description
 This script creates a simple graphical user interface (GUI) for tracking players' lives in a game of Star Wars. It allows users to add or subtract lives from each player, toggle their force abilities, and switch between the two players. The background color of the GUI changes based on which player is currently selected.
 
@@ -77,25 +82,11 @@ def update_background(self):
 This method updates the background color of the GUI based on the selected player. If it's player 1, the background is set to light blue; otherwise, it's set to light coral.
 
 ## Example
-Here is an example use case:
+Example of running the script:
+Note: The entire background is currently red or blue, which is something to be tackled in day 3 of experiments.
+<img width="1393" height="907" alt="image" src="https://github.com/user-attachments/assets/24cafb74-c974-4e76-b35c-5d5dbba9d7db" />
 
-Player 1 starts with 30 lives and no force ability. Player 2 also starts with 30 lives and no force ability.
 
-```
-Player 1: 30
-Player 2: 30
-Force: OFF
-First Player: 1
-```
-
-After Player 1 clicks the "+" button, their life count increases by 1:
-
-```
-Player 1: 31
-Player 2: 30
-Force: OFF
-First Player: 1
-```
 
 ## Customization
 This script can be customized further by adding more features or modifying existing ones. For example, you could add a timer that decreases over time if a player's force ability is active, or create a separate GUI for tracking the score.
