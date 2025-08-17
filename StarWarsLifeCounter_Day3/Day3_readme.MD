@@ -1,6 +1,21 @@
 # Star Wars Life Counter
 A simple graphical application for tracking life totals and force status in a Star Wars context.
 
+###Initial Prompt
+
+Act as an expert python programmer.  
+Write code using python for a Star Wars life counter application. It should set starting life to 30 and support two players.  Have buttons to raise and lower life totals, an indicator of the current first player, which can be updated, and a toggle for having the "Force", which either or both players may have at the same time.
+Pack all buttons using a grid, and use Tkfont or similar to allow the labels in buttons to scale as the window is expanded.
+
+The additional criteria need met:
+The buttons should scale when the window is expanded.
+When Player 1 is the first player, change the color to blue for only these elements:
+The Player 1/Player 2 labels
+The current life totals for both players
+The first player label
+When Player 2 becomes the first player, change the color to red for the same elements.
+All other elements should remain a default grey background, and not update.
+
 ## Features
 - Uses tkinter library for GUI setup.
 - Applies OOP principles through class definition.
