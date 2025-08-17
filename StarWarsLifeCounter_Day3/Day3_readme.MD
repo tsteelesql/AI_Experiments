@@ -1,7 +1,7 @@
 # Star Wars Life Counter
 A simple graphical application for tracking life totals and force status in a Star Wars context.
 
-###Initial Prompt
+#### Initial Prompt
 
 Act as an expert python programmer.  
 Write code using python for a Star Wars life counter application. It should set starting life to 30 and support two players.  Have buttons to raise and lower life totals, an indicator of the current first player, which can be updated, and a toggle for having the "Force", which either or both players may have at the same time.
