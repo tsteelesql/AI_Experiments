@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Star Wars Life Counter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Star Wars Life Counter</h1>
+
+        <div class="players">
+            <div class="player">
+                <h2 class="label {% if state.first_player == 1 %}blue{% elif state.first_player == 2 %}red{% endif %}">Player 1</h2>
+                <div class="life {% if state.first_player == 1 %}blue{% elif state.first_player == 2 %}red{% endif %}">{{ state.player1_life }}</div>
+                <form method="post">
+                    <button name="action" value="p1_inc">+1</button>
+                    <button name="action" value="p1_dec">-1</button>
+                    <button name="action" value="toggle_force_p1">
+                        {% if state.player1_force %}Release Force{% else %}Gain Force{% endif %}
+                    </button>
+                </form>
+            </div>
+
+            <div class="player">
+                <h2 class="label {% if state.first_player == 1 %}blue{% elif state.first_player == 2 %}red{% endif %}">Player 2</h2>
+                <div class="life {% if state.first_player == 1 %}blue{% elif state.first_player == 2 %}red{% endif %}">{{ state.player2_life }}</div>
+                <form method="post">
+                    <button name="action" value="p2_inc">+1</button>
+                    <button name="action" value="p2_dec">-1</button>
+                    <button name="action" value="toggle_force_p2">
+                        {% if state.player2_force %}Release Force{% else %}Gain Force{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="first-player">
+            <form method="post">
+                <h3 class="{% if state.first_player == 1 %}blue{% elif state.first_player == 2 %}red{% endif %}">
+                    First Player: Player {{ state.first_player }}
+                </h3>
+                <button name="action" value="toggle_first">Toggle First Player</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
