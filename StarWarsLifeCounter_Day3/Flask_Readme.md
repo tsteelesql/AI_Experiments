@@ -2,6 +2,29 @@
 ## Description
 This is a simple web game framework built using Flask, a lightweight Python web application framework. The framework allows users to create games with basic state management and user interactions.
 
+#### Intial Prompt
+
+Act as an expert python programmer.  
+Write code using python for a Star Wars life counter application. It should set starting life to 30 and support two players.  Have buttons to raise and lower life totals, an indicator of the current first player, which can be updated, and a toggle for having the "Force", which either or both players may have at the same time.
+Use Flask to generate the application as a basic web application.
+
+The additional criteria need met:
+
+The buttons should scale when the window is expanded.
+
+When Player 1 is the first player, change the color to blue for only these elements:
+
+a. The Player 1/Player 2 labels
+
+b. The current life totals for both players
+
+c. The first player label
+
+When Player 2 becomes the first player, change the color to red for the same elements.
+
+All other elements should remain a default grey background, and not update.
+
+
 ## Features
 - Built using Flask
 - State management for players
