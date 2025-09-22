@@ -1,63 +1,60 @@
-import ollama
-import tkinter as tk
-from tkinter import messagebox
+import os
+from langchain_ollama import ChatOllama
+from langchain.prompts import PromptTemplate
+from langchain.chains import LLMChain
+from directory_selector_class import DirectorySelectorApp
 
-client = ollama.Client()
+ollama_model = "qwen3-coder"
 
-model = "llama3.2"
-DIRECTORY = 'PycharmProjects/AI_Code_Testing/SWU_LifeCounter.py'
-template = "Templates/readme_template.txt"
-script = ''
+def read_python_files(directory):
+    code_blocks = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".py"):
+                file_path = os.path.join(root, file)
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    code_blocks.append(f"# File: {file_path}\n{content}")
+    return "\n\n".join(code_blocks)
 
-def copy_to_clipboard():
-    result = text_widget.get("1.0", tk.END)
-    root.clipboard_clear()
-    root.clipboard_append(result.strip())
-    messagebox.showinfo("Copied", "Text copied to clipboard!")
+def generate_readme(code_context, model_name=ollama_model):
+    prompt = PromptTemplate(
+        input_variables=["code"],
+        template="""
+You are an expert software documenter. Based on the following Python codebase, generate a professional README.md file that includes:
+- Project description
+- Features
+- Installation instructions
+- Usage examples
+- Any dependencies or requirements
 
-# Create the main window
-root = tk.Tk()
-root.title("Result Display")
-root.geometry("500x600")
+This README should be written for GitHub, so that formatting appears correctly.
+Do not include a License section.
 
-# Frame to hold the Text widget and Scrollbar side by side
-frame = tk.Frame(root)
-frame.pack(pady=20, fill=tk.BOTH, expand=True)
+Codebase:
+{code}
+"""
+    )
 
-# Create the Text widget
-text_widget = tk.Text(frame, wrap=tk.WORD)
-text_widget.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-# Add a vertical scrollbar
-scrollbar = tk.Scrollbar(frame, command=text_widget.yview)
-scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-# Link the scrollbar to the text widget
-text_widget.config(yscrollcommand=scrollbar.set)
-
-# Create a copy button
-copy_button = tk.Button(root, text="Copy Result", command=copy_to_clipboard)
-copy_button.pack(pady=10)
-
-
-with open(DIRECTORY, 'r', encoding='utf-8') as f:
-    file_content = f.read()
-
-with open(template, 'r', encoding='utf-8') as f:
-    prompt = f.read()
-
-prompt += (f"<START OF SCRIPT>"
-           f"{file_content}"
-           f"<END OF SCRIPT>"
-           f"📤 OUTPUT:"
-           f"Your output should be valid GitHub markdown."
-           f"Do not include any explanation or commentary — just the raw markdown text of the README.")
+    llm = ChatOllama(model=model_name,temperature=0.7)
+    chain = LLMChain(llm=llm, prompt=prompt)
+    return chain.run(code=code_context)
 
 
-response = client.generate(model=model, prompt=prompt)
+if __name__ == "__main__":
 
-# Insert sample text
-text_widget.insert(tk.END, response.response)
+    LocalFileSelector = DirectorySelectorApp()
+    LocalFileSelector.run()
 
-# Run the application
-root.mainloop()
+    # After the window closes, you can access the saved path
+    selected_path = LocalFileSelector.get_saved_path()
+    if selected_path:
+        print(f"Main script received path: {selected_path}")
+
+    code_context = read_python_files(selected_path)
+    readme_content = generate_readme(code_context)
+
+    with open(f"{selected_path}/README.md", "w", encoding="utf-8") as f:
+        f.write(readme_content)
+
+    print("README.md generated successfully.")
