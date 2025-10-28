@@ -9,7 +9,7 @@ from config import RECOMMENDATION_COUNT
 def build_prompt(likes: List[str], n: int = RECOMMENDATION_COUNT) -> str:
     likes_block = "\n".join(f"- {s}" for s in likes)
     prompt = (
-        "You are an expert TV and streaming show recommender.\n"
+        "You are an expert anime TV and streaming show recommender.\n"
         "User provided a list of shows they like.\n"
         f"Produce exactly {n} distinct TV show or limited-series recommendations "
         "that are NOT in the user's list. For each recommendation output a single "
