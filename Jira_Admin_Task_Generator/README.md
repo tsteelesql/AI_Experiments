@@ -2,6 +2,8 @@
 
 A modular Python application that generates realistic Jira administrative tasks for practice, testing, and training purposes.
 
+<img width="1978" height="1356" alt="image" src="https://github.com/user-attachments/assets/50bd5b53-dc80-424c-93b4-eaa797681f55" />
+
 ## Features
 
 - **Varied Task Generation**: Creates different types of Jira tasks (bug creation, priority updates, workflow management, etc.)
