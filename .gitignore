@@ -4,3 +4,6 @@
 /Recommendation_Generator/recommender/__pycache__
 /Jira_Admin_Task_Generator/__pycache__
 question_history.json
+/LangChain_BlogPostGenerator/__pycache__
+generated_blog_post.md
+blog_generator.log
