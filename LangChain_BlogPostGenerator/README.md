@@ -1,4 +1,4 @@
-# Blog Post Generator - Refactored
+#LangChain Blog Post Generator
 
 A multi-agent system that analyzes Python codebases and generates technical blog posts using Ollama and LangChain.
 
