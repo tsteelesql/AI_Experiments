@@ -7,6 +7,8 @@ from langchain_core.output_parsers import StrOutputParser
 import customtkinter as ctk
 from tkinter import scrolledtext
 import threading
+import os
+from datetime import datetime
 
 # --- 1. Define the desired structured output using Pydantic ---
 class JiraSupportTask(BaseModel):
@@ -17,25 +19,119 @@ class JiraSupportTask(BaseModel):
 
 # --- 2. Define the context based on Jira documentation (Snippets focus on Custom Fields) ---
 JIRA_ADMIN_CONTEXT = """
-The core daily admin task involves configuring custom fields.
-1. Custom fields must be associated with a Screen to be visible when creating, editing, or viewing an issue. If no screen is associated, the field is created but is not used.
-2. To add a field to a screen: Navigate to Fields > Field configurations, select the field configuration, find the custom field, and select 'Screens' to change the associations.
-3. Field configurations group fields together and are assigned to issue types using Field configuration schemes.
-4. A common end-user issue is: 'I created a new custom field, but I cannot see it when I create an issue in Project X.'
-5. The solution involves ensuring the custom field is added to the Screen that is currently being used by the relevant Issue Type and Project.
+You are a language model assisting a Jira administrator by generating realistic sample tasks that mimic requests from end users. These tasks should reflect common Jira interactions across bug tracking, project management, and workflow maintenance.
 
-Sample other user requests to use as inspiration:
-1. Create a new bug ticket for the checkout page error and assign it to the frontend team.  
-2. Update the priority of all open issues in the Mobile App project to High.  
-3. Add a comment to ticket JIRA-1023 asking for a status update from the assignee.  
-4. Generate a list of all unresolved issues tagged with security created in the last 30 days.  
-5. Move all tasks in the Sprint 12 board from To Do to In Progress.  
-6. Link ticket JIRA-2045 to the epic User Authentication Revamp.  
-7. Search for tickets assigned to me that are due this week and have no comments.  
-8. Close all subtasks under JIRA-3001 and mark the parent task as Ready for QA.  
-9. Create a recurring reminder to review tickets in the Blocked column every Monday morning.  
-10. Export all completed issues from the Website Redesign project into a CSV file for reporting.  
+Your goal is to produce actionable, varied, and natural-sounding Jira tickets that an admin could use for practice, automation testing, or training purposes. These tasks should simulate real-world scenarios without referencing actual users or projects.
+
+Here are examples of the types of sample tasks you may generate:
+
+    Create a new bug ticket for the checkout page error and assign it to the frontend team.
+
+    Update the priority of all open issues in the Mobile App project to High.
+
+    Add a comment to ticket JIRA-1023 asking for a status update from the assignee.
+
+    Generate a list of all unresolved issues tagged with security created in the last 30 days.
+
+    Move all tasks in the Sprint 12 board from To Do to In Progress.
+
+    Link ticket JIRA-2045 to the epic User Authentication Revamp.
+
+    Search for tickets assigned to me that are due this week and have no comments.
+
+    Close all subtasks under JIRA-3001 and mark the parent task as Ready for QA.
+
+    Create a recurring reminder to review tickets in the Blocked column every Monday morning.
+
+    Export all completed issues from the Website Redesign project into a CSV file for reporting.
+
+You should be able to:
+
+    Generate tasks that reflect realistic Jira usage across different roles and teams.
+
+    Vary the structure and phrasing to simulate natural user input.
+
+    Include references to common Jira entities like boards, epics, priorities, statuses, and labels.
+
+    Ensure tasks are clear, relevant, and executable by a Jira admin.
+
+Your tone should be practical, efficient, and aligned with how users typically communicate in a work environment.
 """
+
+# --- History Management ---
+class QuestionHistory:
+    def __init__(self, history_file="question_history.json"):
+        self.history_file = history_file
+        self.history = self.load_history()
+    
+    def load_history(self):
+        """Load question history from file."""
+        if os.path.exists(self.history_file):
+            try:
+                with open(self.history_file, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, FileNotFoundError):
+                return []
+        return []
+    
+    def save_history(self):
+        """Save question history to file."""
+        try:
+            with open(self.history_file, 'w', encoding='utf-8') as f:
+                json.dump(self.history, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            print(f"Error saving history: {e}")
+    
+    def add_question(self, question_data):
+        """Add a new question to history."""
+        entry = {
+            'timestamp': datetime.now().isoformat(),
+            'question': question_data['question'],
+            'hint': question_data['hint'],
+            'solution': question_data['solution']
+        }
+        self.history.append(entry)
+        # Keep only last 50 entries to prevent file from growing too large
+        if len(self.history) > 50:
+            self.history = self.history[-50:]
+        self.save_history()
+    
+    def get_recent_questions(self, count=10):
+        """Get recent questions to avoid repetition."""
+        return [entry['question'] for entry in self.history[-count:]]
+    
+    def get_all_questions(self):
+        """Get all questions from history."""
+        return [entry['question'] for entry in self.history]
+    
+    def analyze_task_categories(self, count=5):
+        """Analyze recent tasks to identify categories and patterns."""
+        recent_entries = self.history[-count:] if len(self.history) >= count else self.history
+        categories = []
+        
+        for entry in recent_entries:
+            question = entry['question'].lower()
+            if any(word in question for word in ['create', 'new', 'add']):
+                categories.append('creation')
+            elif any(word in question for word in ['update', 'change', 'modify']):
+                categories.append('update')
+            elif any(word in question for word in ['assign', 'move', 'transfer']):
+                categories.append('assignment')
+            elif any(word in question for word in ['search', 'find', 'list', 'generate']):
+                categories.append('search')
+            elif any(word in question for word in ['close', 'complete', 'finish']):
+                categories.append('closure')
+            elif any(word in question for word in ['link', 'connect', 'associate']):
+                categories.append('linking')
+            elif any(word in question for word in ['export', 'download', 'report']):
+                categories.append('reporting')
+            else:
+                categories.append('other')
+        
+        return categories
+
+# Initialize global history
+question_history = QuestionHistory()
 
 # --- Custom Parser for Robust JSON Handling ---
 
@@ -85,32 +181,63 @@ model = "llama3.2"
 llm = ChatOllama(model=model, temperature=0.5, format="json")
 
 # Create the prompt template. We manually specify the expected schema in the system prompt.
-prompt = ChatPromptTemplate.from_messages(
-    [
-        (
-            "system",
-            "You are a specialized AI designed to simulate Jira support requests. "
-            "Your task is to generate a support question from an end-user, "
-            "and then provide a technical hint and a detailed solution for a Jira Admin. "
-            "Base the scenario on the following Jira administration context about custom fields: \n\n"
-            "{context}\n\n"
-            "The output MUST be a JSON object that strictly adheres to the following schema:\n"
-            "{{'question': '...', 'hint': '...', 'solution': ['step 1', 'step 2']}}",
-        ),
-        (
-            "human",
-            "Generate a support request simulating a daily admin task related to Jira custom fields, "
-            "as requested by an frustrated end-user.",
-        ),
-    ]
-).partial(
-    # Insert context into the system prompt
-    context=JIRA_ADMIN_CONTEXT,
-)
+def create_prompt_with_history():
+    """Create prompt template with history to avoid repetition."""
+    recent_questions = question_history.get_recent_questions(5)
+    recent_categories = question_history.analyze_task_categories(5)
+    
+    history_text = ""
+    if recent_questions:
+        history_text = "\n\nIMPORTANT: Avoid generating questions similar to these recent ones:\n"
+        for i, q in enumerate(recent_questions, 1):
+            history_text += f"{i}. {q}\n"
+        
+        # Add category analysis
+        if recent_categories:
+            unique_categories = list(set(recent_categories))
+            history_text += f"\nRecent task categories: {', '.join(unique_categories)}\n"
+            history_text += "Generate a completely different type of task and avoid repeating the same category or pattern.\n"
+            history_text += "Focus on generating tasks from categories not recently used.\n"
+    
+    return ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a specialized AI designed to simulate realistic Jira administrative tasks. "
+                "Your task is to generate a practical request that a Jira administrator might receive from end users, "
+                "and then provide a technical hint and a detailed step-by-step solution for completing the task. "
+                "\n\n"
+                "Context and Guidelines:\n"
+                "{context}\n\n"
+                "{history_context}\n\n"
+                "Requirements:\n"
+                "- Generate varied task types (bug creation, priority updates, workflow management, reporting, etc.)\n"
+                "- Use realistic project names, ticket IDs, and team references\n"
+                "- Make each request sound natural and practical\n"
+                "- Vary the complexity and scope of tasks\n"
+                "- Avoid repeating the same category of task consecutively\n"
+                "- Include specific details like project names, ticket references, or team assignments\n"
+                "\n"
+                "The output MUST be a JSON object that strictly adheres to the following schema:\n"
+                "{{'question': '...', 'hint': '...', 'solution': ['step 1', 'step 2']}}",
+            ),
+            (
+                "human",
+                "Generate a realistic Jira administrative task request that an end user might submit. "
+                "Make it practical, varied, and different from recent tasks. Include specific details like project names, "
+                "ticket references, or team assignments to make it sound authentic. Ensure it's a different category "
+                "from recent tasks.",
+            ),
+        ]
+    ).partial(
+        # Insert context into the system prompt
+        context=JIRA_ADMIN_CONTEXT,
+        history_context=history_text,
+    )
 
 
 # Create the chain using LCEL: Prompt -> LLM (raw string) -> StrOutputParser -> Custom robust_json_parser
-jira_chain = prompt | llm | StrOutputParser() | robust_json_parser
+# Note: Chain will be created dynamically with history
 
 # --- 4. Run the chain and return the results ---
 def generate_jira_task():
@@ -119,6 +246,10 @@ def generate_jira_task():
     print(f"Generating task using Ollama ({model})...")
     
     try:
+        # Create chain with current history
+        prompt = create_prompt_with_history()
+        jira_chain = prompt | llm | StrOutputParser() | robust_json_parser
+        
         # Invoke the chain, which now returns the processed dictionary
         response_dict = jira_chain.invoke({})
         
@@ -135,11 +266,16 @@ def generate_jira_task():
         else:
             solution_text = "N/A"
             
-        return {
+        task_data = {
             'question': question,
             'hint': hint,
             'solution': solution_text
         }
+        
+        # Add to history
+        question_history.add_question(task_data)
+        
+        return task_data
 
     except Exception as e:
         print(f"\nAn UNHANDLED error occurred while running the chain: {e}")
@@ -167,6 +303,7 @@ class JiraTaskGeneratorGUI:
         # State variables
         self.hint_visible = False
         self.solution_visible = False
+        self.history_visible = False
         self.current_task = None
         
         self.create_widgets()
@@ -276,6 +413,38 @@ class JiraTaskGeneratorGUI:
         )
         # Don't pack initially - will be packed when shown
         
+        # History section
+        history_frame = ctk.CTkFrame(main_frame)
+        history_frame.pack(fill="x", pady=(10, 10))
+        
+        history_header_frame = ctk.CTkFrame(history_frame)
+        history_header_frame.pack(fill="x", padx=10, pady=10)
+        
+        history_label = ctk.CTkLabel(
+            history_header_frame,
+            text="Question History",
+            font=ctk.CTkFont(size=16, weight="bold")
+        )
+        history_label.pack(side="left")
+        
+        self.history_button = ctk.CTkButton(
+            history_header_frame,
+            text="Show History",
+            command=self.toggle_history,
+            width=140,
+            font=ctk.CTkFont(size=14)
+        )
+        self.history_button.pack(side="right")
+        
+        self.history_text = scrolledtext.ScrolledText(
+            history_frame,
+            height=4,
+            font=("Arial", 12),
+            wrap="word",
+            state="disabled"
+        )
+        # Don't pack initially - will be packed when shown
+        
         # Exit button
         self.exit_button = ctk.CTkButton(
             main_frame,
@@ -334,6 +503,9 @@ class JiraTaskGeneratorGUI:
             self.hint_status.configure(text="")
             self.solution_status.configure(text="")
             
+            # Update history display
+            self.update_history_display()
+            
     def toggle_hint(self):
         """Toggle hint visibility."""
         if self.current_task:
@@ -355,6 +527,33 @@ class JiraTaskGeneratorGUI:
             else:
                 self.solution_text.pack_forget()
                 self.solution_status.configure(text="")
+                
+    def update_history_display(self):
+        """Update the history display with recent questions."""
+        history_entries = question_history.history[-10:]  # Show last 10 entries
+        history_text = ""
+        
+        if history_entries:
+            for i, entry in enumerate(reversed(history_entries), 1):
+                timestamp = datetime.fromisoformat(entry['timestamp']).strftime("%m/%d %H:%M")
+                history_text += f"{i}. [{timestamp}] {entry['question'][:80]}...\n"
+        else:
+            history_text = "No questions generated yet."
+            
+        self.history_text.config(state="normal")
+        self.history_text.delete(1.0, "end")
+        self.history_text.insert(1.0, history_text)
+        self.history_text.config(state="disabled")
+                
+    def toggle_history(self):
+        """Toggle history visibility."""
+        self.history_visible = not self.history_visible
+        if self.history_visible:
+            self.history_text.pack(fill="x", padx=10, pady=(0, 10))
+            self.history_button.configure(text="Hide History")
+        else:
+            self.history_text.pack_forget()
+            self.history_button.configure(text="Show History")
                 
     def run(self):
         """Start the GUI main loop."""
