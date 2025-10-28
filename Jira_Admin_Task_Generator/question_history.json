@@ -1,0 +1,44 @@
+[
+  {
+    "timestamp": "2025-10-27T20:26:40.147306",
+    "question": "I created a new custom field called 'Priority Level' but I'm having trouble seeing it when creating a new issue in my Project X. I've checked the Field configurations and the Issue Type scheme, but I just can't seem to get it to appear on the screen. Can you help me figure out what's going wrong?",
+    "hint": "Double-check that the custom field is associated with a Screen that is currently being used by the relevant Issue Type and Project. Make sure the Field configuration is correctly linked to the Screen.",
+    "solution": "N/A"
+  },
+  {
+    "timestamp": "2025-10-27T20:26:46.906223",
+    "question": "I just created a new custom field called \\u201cProject Lead\\u201d for our new initiative but I keep seeing the old \\u201cTeam Member\\u201d field when creating a new issue in our Project Y. Why isn’t my new custom field showing up and how can I fix this?",
+    "hint": "Double-check that your new custom field is associated with the correct screen for the relevant Issue Type and Project",
+    "solution": "1. Check the Field configurations for both \\u201cProject Lead\\u201d and \\u201cTeam Member\\u201d fields to ensure they are assigned to different screens or issue types.\n2. Verify that the new custom field is added to the correct Screen that is currently being used by the relevant Issue Type in Project Y.\n3. Check if there are any conflicts with existing fields or screen configurations that might be causing the issue. If necessary, recreate the screen and add the new custom field to it."
+  },
+  {
+    "timestamp": "2025-10-27T20:26:51.104786",
+    "question": "I created a new custom field called \\u201cBug Severity\\u201d for our bug tracking project, but it's not showing up on the screen when I create a new issue in our Project Z. I've checked the Field configurations and the Issue Type scheme, but I just can't seem to get it to appear. Can you help me figure out what's going wrong?",
+    "hint": "Double-check that the custom field is associated with an existing Screen for the relevant Issue Type.",
+    "solution": "1. Step 1: Go to Fields > Field configurations and find your custom field \\u201cBug Severity\\u201d. Click on it to view its details.\n2. Step 2: Look for the 'Screens' tab and click on it. Check that the issue type associated with this field has a valid Screen assigned.\n3. Step 3: If no Screen is found, create one by going to Screens > Screens and clicking on \\u201cCreate screen\\u201d. Assign the custom field to this new Screen.\n4. Step 4: Save changes and restart your Jira instance. The custom field should now be visible on the screen when creating a new issue in Project Z."
+  },
+  {
+    "timestamp": "2025-10-27T20:33:18.307398",
+    "question": "I'd like to generate a report on the average time spent by the DevOps team on resolving issues in our 'Infrastructure' board. Could you please provide me with a CSV file containing the total hours worked, average hours per issue, and the top 3 slowest issues resolved within the last 30 days?",
+    "hint": "Check the 'Board' settings to ensure that the 'Reporting' feature is enabled for the 'Infrastructure' board. Also, make sure you have the necessary permissions to access the data.",
+    "solution": "1. Step 1: Navigate to the 'Infrastructure' board and click on the 'Reports' tab in the top navigation menu.\n2. Step 2: Select the 'Time Spent' report type and choose the time range of the last 30 days. Click 'Generate Report'.\n3. Step 3: In the generated CSV file, find the columns for 'Total Hours Worked', 'Average Hours per Issue', and 'Slowest Issues'. Extract these values into a spreadsheet or a data analysis tool.\n4. Step 4: Use a formula to calculate the average hours per issue. You can also use this opportunity to identify any trends or patterns in the time spent on resolving issues.\n5. Step 5: To get the top 3 slowest issues, sort the 'Slowest Issues' column in descending order and select only the top 3 rows. Use these values to create a bar chart or a graph to visualize the data."
+  },
+  {
+    "timestamp": "2025-10-27T20:33:28.383038",
+    "question": "I'd like to create a new issue in the 'Website Redesign' project (Project ID: 12345) and assign it to the UX Design team. Please create a new bug ticket with the title 'Broken Login Form' and add the label 'High Priority'. Can you also link this ticket to the epic 'User Authentication Revamp' (Epic Link: https://example.com/revamp) and set its priority to High?",
+    "hint": "Make sure to select the correct project, assign the issue to the UX Design team, and link it to the relevant epic.",
+    "solution": "1. 1. Navigate to Project ID: 12345 (Website Redesign project) in Jira and click on 'Create Issue' button.\n2. 2. In the 'Create Issue' dialog box, enter the title 'Broken Login Form', select 'Bug' as the issue type, and add the label 'High Priority'.\n3. 3. Assign the issue to the UX Design team by selecting their name from the 'Assignee' dropdown list.\n4. 4. Link the issue to the epic 'User Authentication Revamp' (Epic Link: https://example.com/revamp) by clicking on the 'Link Epic' button and entering the epic's ID or URL.\n5. 5. Set the priority of the issue to High by selecting the 'High' option from the 'Priority' dropdown list."
+  },
+  {
+    "timestamp": "2025-10-27T20:33:37.473263",
+    "question": "Create a new issue in the 'Mobile App' project (Project ID: 67890) and assign it to the QA Team, with the title 'Crash on Launch', and add the label 'High Priority'. Also, link this ticket to the epic 'User Authentication Revamp' (Epic Link: https://example.com/revamp) and set its priority to High. Please also create a new custom field called 'Launch Date' for this project.",
+    "hint": "Make sure to include the Launch Date in the issue description when creating the new ticket.",
+    "solution": "1. Step 1: Navigate to the 'Mobile App' project (Project ID: 67890) and click on the 'Issues' tab.\n2. Step 2: Click on the 'Create Issue' button and fill in the required fields, including the title 'Crash on Launch', assign it to the QA Team, and add the label 'High Priority'.\n3. Step 3: Link this ticket to the epic 'User Authentication Revamp' (Epic Link: https://example.com/revamp) by clicking on the 'Epics' dropdown menu and selecting the relevant epic.\n4. Step 4: Set the priority of this issue to High by clicking on the 'Priority' dropdown menu and selecting 'High'.\n5. Step 5: Create a new custom field called 'Launch Date' for this project by navigating to the 'Issues' tab, clicking on the 'Fields' dropdown menu, and selecting 'Create Custom Field'.\n6. Step 6: Fill in the required information for the 'Launch Date' custom field, including its name, type (date), and any other relevant details.\n7. Step 7: Save all changes and verify that the new issue has been created with the correct settings."
+  },
+  {
+    "timestamp": "2025-10-27T20:36:21.005953",
+    "question": "I'd like to create a new custom field called 'Code Review Status' for our 'API Development' project (Project ID: 11111) and add it to the 'In Progress' status screen. Can you please provide me with instructions on how to do this?",
+    "hint": "To create a custom field, you'll need to navigate to the Issue Type scheme and add a new field configuration.",
+    "solution": "1. Step 1: Navigate to the Issue Type Scheme for the 'API Development' project (Project ID: 11111) by clicking on the gear icon next to the project name in the issue list.\n2. Step 2: Click on the 'Add Field Configuration' button and select 'Custom Field'.\n3. Step 3: Fill in the field details, such as the field name ('Code Review Status'), data type (e.g., 'Select'), and any other relevant settings.\n4. Step 4: Save and close the issue type scheme configuration.\n5. Step 5: Go back to the project's issue list and click on the gear icon next to each issue. Select 'Edit Issue' and then click on the 'Add Field' button.\n6. Step 6: In the field selection dropdown, select the newly created custom field ('Code Review Status').\n7. Step 7: Click 'Save Changes' to apply the new field configuration."
+  }
+]
